@@ -3,7 +3,7 @@ nr_frequency
 
 Ever struggled to compose consistent frequency parameters for 5G New Radio cells?
 Ever tried to configure 5G New Radio contiguous carriers for CA?
-Ever wondered where your 5G New Radio cell's SSBlock candidates are located the time domain?
+Ever wondered where your 5G New Radio cell's SSBlock candidates are located in the time domain?
 
 The `nr_frequency` module will let you do this efficiently.
 
