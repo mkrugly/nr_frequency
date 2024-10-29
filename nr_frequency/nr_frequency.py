@@ -21,77 +21,117 @@ With only a few optional input parameters the module provides an optimal set of 
 
 Example::
 
-    >>> import nr_frequency
-    >>> c = nr_frequency.Config(param={'scs_ssb': 30, 'scs_common': 15, 'scs_carrier': 15, 'fc': 3750000,'band': 77, 'bw': 50, 'pdcchConfigSib1': 4})
+    >>> from nr_frequency import nr_frequency
+    >>> c = nr_frequency.Config(
+    ...        param={
+    ...            "scs_ssb": 30,     # SS/PBCH block subcarrier spacing TS 38.101-1 Table 5.4.3.3-1, TS 38.101-2 Table 5.4.3.3-1
+    ...            "scs_common": 30,  # subCarrierSpacingCommon in MIB (scs for SIB1, Msg.2/4, broadcast etc.)
+    ...            "scs_carrier": 30, # subcarrier spacing for the carrier (SCS-SpecificCarrier),
+    ...                               # TS 38.101-1 Table 5.3.5-1, TS 38.101-2 Table 5.3.5-1
+    ...            "fc_channel": 3750000, # proposed channel center frequency (maybe shifted
+    ...                                   # if not in channel raster or coreset0, BWP start adjustment necessary)
+    ...            "band": 77,  # NR operating band
+    ...            "bw": 50,    # channel bandwidth
+    ...            "pdcchConfigSib1": 24,  # pdcch-ConfigSIB1 in MIB (used to derive )
+    ...            "offset_to_carrier": 102,  # offset between Point A and the lower edge of the carrier
+    ...        }
+    ...    )
+    INFO:[{'pattern': 1, 'n_rb': 24, 'n_sym': 2, 'offset': 0}, {'pattern': 1, 'n_rb': 24, 'n_sym': 2, 'offset': 1}, {'pattern': 1, 'n_rb': 24, 'n_sym': 2, 'offset': 2}, {'pattern': 1, 'n_rb': 24, 'n_sym': 2, 'offset': 3}, {'pattern': 1, 'n_rb': 24, 'n_sym': 2, 'offset': 4}, {'pattern': 1, 'n_rb': 24, 'n_sym': 3, 'offset': 0}, {'pattern': 1, 'n_rb': 24, 'n_sym': 3, 'offset': 1}, {'pattern': 1, 'n_rb': 24, 'n_sym': 3, 'offset': 2}, {'pattern': 1, 'n_rb': 24, 'n_sym': 3, 'offset': 3}, {'pattern': 1, 'n_rb': 24, 'n_sym': 3, 'offset': 4}, {'pattern': 1, 'n_rb': 48, 'n_sym': 1, 'offset': 12}, {'pattern': 1, 'n_rb': 48, 'n_sym': 1, 'offset': 14}, {'pattern': 1, 'n_rb': 48, 'n_sym': 1, 'offset': 16}, {'pattern': 1, 'n_rb': 48, 'n_sym': 2, 'offset': 12}, {'pattern': 1, 'n_rb': 48, 'n_sym': 2, 'offset': 14}, {'pattern': 1, 'n_rb': 48, 'n_sym': 2, 'offset': 16}]
+    DEBUG:freq_l:3300000, freq_h:4200000, bw:900000, cbw:47880, scs_carrier:30, channel_bw:50
+    INFO:Adjusting Dl channel frequency to be in channel raster
+    DEBUG:DL fc range:(3323940, 3750000, 4176060), fc_dl: 3750000
+    INFO:Setting DL center frequency to 3738480
     INFO:Setting Ul channel frequency based on DL channel frequency
     INFO:Setting Ul channel bandwidth equal to Dl channel bandwidth
-    DEBUG:freq_l:3300000, freq_h:4200000, bw:900000, cbw:48600, scs_carrier:15, channel_bw:50
-    DEBUG:freq_l:3300000, freq_h:4200000, bw:900000, cbw:48600, scs_carrier:15, channel_bw:50
+    DEBUG:freq_l:3300000, freq_h:4200000, bw:900000, cbw:47880, scs_carrier:30, channel_bw:50
     INFO:Adjusting Ul channel frequency to be in channel raster
-    DEBUG:UL FC range:(3324300, 3750000, 4175700), fc_ul
-    INFO:Adjusting Dl channel frequency to be in channel raster
-    DEBUG:DL fc range:(3324300, 3750000, 4175700), fc_dl
-    >>> cell_params = c.calculate()
-    DEBUG:fc_dl:3750000, cwb_dl:48600, bw_ssb:7200, f_offset_rb:360
+    DEBUG:UL FC range:(3323940, 3750000, 4176060), fc_ul: 3750000
+    INFO:Setting UL center frequency to 3738480
+
+    >>> cell1_cfg = c.calculate()
+    DEBUG:fc_dl:3750000, cwb_dl:47880, bw_ssb:7200, f_offset_rb:360
+    INFO:Starting GSCN/F_SS selection from f_ssb_min:3730020
     INFO:Found f_ss:3730080 for gscn:8006
     INFO:Selected GSCN:8006, F_SS:3730080
     INFO:Adjusting channel frequency to align BWP start with Coreset0 start.
-    INFO:f_diff(f_off_ssb_carrier:780 - f_offset_rb:360) = 420
-    INFO:f_diff (k_ssb:28) > k_ssb_max:23. Channel frequency shift needed
-    INFO:trying _f_shift:75, k_ssb:23, f_k_ssb:345
-    INFO:Shifting Channel Frequency up by shift:75 to 3750075, k_ssb:23
-    INFO:Absolute Frequency PointA ARFCN:648385 (f_pointA:3725775)
+    INFO:f_diff(f_off_ssb_carrier:420 - f_offset_rb:360) = 60
+    INFO:f_diff (k_ssb:4) <= k_ssb_max:22. Channel frequency shift not needed
+    INFO:Absolute Frequency PointA ARFCN:645956 (f_pointA:3689340)
     INFO:Absolute Frequency SSB ARFCN:648672 (f_ss:3730080)
-    INFO:Params: {'arfcn_point_a': 648385,
-     'arfcn_point_a_ul': 648385,
+    INFO:Calculated Common Coreset: s_rb=0 (s_crb=102), n_rb=24, n_rbg=4, bitm=111100000000000000000000000000000000000000000
+    INFO:Params: {'arfcn_point_a': 645956,
+     'arfcn_point_a_ul': 645956,
      'arfcn_ssb': 648672,
      'band': 77,
      'band_bw_dl': 900000,
      'band_bw_ul': 900000,
+     'band_dl_f_range': (3300000, 4200000),
+     'band_ul_f_range': (3300000, 4200000),
      'bw': 50,
      'bw_ssb': 7200,
      'bw_ul': 50,
-     'cbw_dl': 48600,
-     'cbw_dl_nrb': 270,
-     'cbw_ul': 48600,
-     'cbw_ul_nrb': 270,
-     'f_domain_res': '111111110000000000000000000000000000000000000',
-     'f_off_to_carrier': 0,
+     'cbw_dl': 47880,
+     'cbw_dl_nrb': 133,
+     'cbw_ul': 47880,
+     'cbw_ul_nrb': 133,
+     'duplex': 'TDD',
+     'f_domain_res': '111100000000000000000000000000000000000000000',
+     'f_fc_to_point_a': 49140,
+     'f_off_to_carrier': 36720,
      'f_offset_rb': 360,
-     'f_point_a': 3725775,
-     'f_point_a_ul': 3725775,
+     'f_point_a': 3689340,
+     'f_point_a_ul': 3689340,
      'f_ss': 3730080,
-     'fc_dl': 3750075,
-     'fc_dl_high': 4175700,
-     'fc_dl_low': 3324300,
-     'fc_dl_range': (3324300, 3750000, 4175700),
-     'fc_ul': 3750075,
-     'fc_ul_high': 4175700,
-     'fc_ul_low': 3324300,
-     'fc_ul_range': (3324300, 3750000, 4175700),
-     'freq_raster': 15,
+     'fc_channel_dl': 3750000,
+     'fc_channel_dl_high': 4176060,
+     'fc_channel_dl_low': 3323940,
+     'fc_channel_dl_range': (3323940, 3750000, 4176060),
+     'fc_channel_ul': 3750000,
+     'fc_channel_ul_high': 4176060,
+     'fc_channel_ul_low': 3323940,
+     'fc_channel_ul_range': (3323940, 3750000, 4176060),
+     'fc_dl': 3738480,
+     'fc_ul': 3738480,
+     'freq_raster': 30,
      'gscn': 8006,
-     'k_ssb': 23,
-     'k_ssb_max': 23,
-     'max_location_and_bw_dl': 1924,
-     'max_location_and_bw_ul': 1924,
-     'n_rb_coreset0': 48,
-     'n_sym_coreset0': 1,
+     'k_ssb': 4,
+     'k_ssb_max': 22,
+     'max_location_and_bw_dl': 36300,
+     'max_location_and_bw_ul': 36300,
+     'n_rb_coreset0': 24,
+     'n_sym_coreset0': 2,
      'offset_coreset0_carrier': 0,
-     'offset_rb': 2,
-     'offset_to_carrier': 0,
-     'offset_to_pa': 2,
-     'pdcch_cfg_sib1': 4,
-     'rb_6_size': 1080,
-     'rb_size': 180,
-     'scs_carrier': 15,
-     'scs_carrier_num': 0,
-     'scs_common': 15,
-     'scs_common_num': 0,
+     'offset_rb': 1,
+     'offset_to_carrier': 102,
+     'offset_to_pa': 206,
+     'pdcch_cfg_sib1': 24,
+     'rb_6_size': 2160,
+     'rb_size': 360,
+     'scs_carrier': 30,
+     'scs_carrier_num': 1,
+     'scs_common': 30,
+     'scs_common_num': 1,
      'scs_kssb': 15,
      'scs_ssb': 30,
      'scs_ssb_num': 1,
-     'ssb_pattern': 'caseC'}
+     'ssb_enabled': True,
+     'ssb_pattern': 'caseC',
+     'use_sync_raster': True}
+
+    >>> cell1_cfg.get("gscn")
+    8006
+    >>> cell1_cfg.get("k_ssb")
+    4
+    >>> cell1_cfg.get("fc_channel_dl")
+    3750000
+    >>> cell1_cfg.get("offset_rb")
+    1
+    >>> cell1_cfg.get("offset_to_pa")
+    206
+    >>> cell1_cfg.get("arfcn_point_a")
+    645956
+    >>> cell1_cfg.get("arfcn_ssb")
+    648672
 
 """
 from typing import List, Dict, Any, Tuple, Callable, Optional
@@ -331,7 +371,7 @@ class NrArfcn:
     # TS 38.104 tab. 5.3.3-1
     guardband = {
         15: {5: 242.5, 10: 312.5, 15: 382.5, 20: 452.5, 25: 522.5, 30: 592.5, 40: 552.5, 50: 692.5, 60: -1, 80: -1, 90: -1, 100: -1},
-        30: {5: 505, 10: 665, 15: 645, 20: 805, 25: 785, 30: 945, 40: 905, 50: 1045, 60: 825, 80: 925, 90: 885, 100: 845},
+        30: {5: 505, 10: 665, 15: 645, 20: 805, 25: 785, 30: 945, 40: 905, 50: 1045, 60: 825, 70: 965, 80: 925, 90: 885, 100: 845},
         60: {5: -1, 10: 1010, 15: 990, 20: 1330, 25: 1310, 30: 1290, 40: 1610, 50: 1570, 60: 1530, 80: 1450, 90: 1410, 100: 1370},
     }
 
@@ -1591,7 +1631,7 @@ class Config:
         else:
             self.ssb_enabled = False
         self.offset_to_carrier = param.get("offset_to_carrier", 0)
-        self.f_fc_to_point_a = 49140
+        self.f_fc_to_point_a = param.get("f_fc_to_point_a", 49140)
         if not self.is_sul:
             self.scs_ssb = param.get("scs_ssb", 30)
             self.pdcch_cfg_sib1 = param.get("pdcchConfigSib1", 164)
@@ -2230,7 +2270,7 @@ def main():
         }
     )
     cell1_params = c.calculate()
-    nom_cs = CaConfig.nominal_spacing(bw_c1=50, bw_c2=60, scs_c1=30, scs_c2=30, band=77)
+    nom_cs = CaConfig.nominal_spacing(bw_c1=50, bw_c2=80, scs_c1=30, scs_c2=30, band=77)
     c2 = Config(
         param={
             "scs_ssb": 30,
