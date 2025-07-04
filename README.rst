@@ -1,29 +1,57 @@
 nr_frequency
 ============
 
-Ever struggled to compose consistent frequency parameters for 5G New Radio cells?
-Ever tried to configure 5G New Radio contiguous carriers for CA?
-Ever wondered where your 5G New Radio cell's SSBlock candidates are located in the time domain?
+**Ever struggled to configure consistent frequency parameters for 5G New Radio (NR) cells?**  
+Tried setting up contiguous carriers for Carrier Aggregation (CA)?  
+Wondered where your 5G NR cell’s SS Block candidates fall in the time domain?
 
-The `nr_frequency` module will let you do this efficiently.
+The ``nr_frequency`` Python module helps you handle all of that — **efficiently and correctly**.
 
-The `nr_frequency` module provides classes for consistent generation of frequency related parameters such as ARFCN for SSB,
-carrier frequency, reference PointA, relative offsets e.g. OffsetToPointA etc. making sure the SSB frequency is in
-the sync raster and carrier frequency in the channel raster within the defined band frequency range.
+What It Does
+------------
 
-It provides methods for handling frequency to arfcn and back, uplink from downlink frequencies (and vice versa),
-calculation of carrier aggregation related parameters like nominal channel spacing or guardband.
+The module provides a set of classes and methods to consistently generate frequency-related parameters for 5G NR, including:
 
-The implementation is based on the TS 38.104 and TS 38.508. The parameters are calculated with the assumption
-that the Control resource set zero (Coreset0) and Synchronization Signal Block (SS Block) should be as close as possible
-to the beginning of the initial BWP (Coreset0 shall start with the start of initial BWP).
+- **ARFCN for SSB**
+- **Carrier frequency**
+- **Reference PointA**
+- **Relative offsets** such as ``OffsetToPointA``
 
-All the input and output frequencies are expressed in kHz.
+It ensures:
 
-Moreover it provides methods for the resolution of the SSB candidates possitions (index, start symbols, slots, subframes)
-based on the TS 38.213 sec. 4.1
+- The **SSB frequency lies within the sync raster**
+- The **carrier frequency aligns with the channel raster**
+- All frequencies are **within the allowed band range**
 
-With only a few optional input parameters the module provides an optimal set of consistent NR settings for different scenarios.
+Key Features
+------------
+
+- **Convert between frequency and ARFCN** (both directions)
+- **Derive uplink frequencies from downlink** (and vice versa)
+- **Calculate Carrier Aggregation parameters**  
+  (e.g., nominal channel spacing, guard bands)
+- **Resolve SSB candidate positions**  
+  (SSB index, start symbols, slots, subframes)
+
+Standards-Based
+---------------
+
+The implementation is based on:
+
+- 3GPP TS 38.104
+- 3GPP TS 38.508
+- 3GPP TS 38.213 §4.1 (for SSB positioning)
+
+Assumptions:
+
+- The **Control Resource Set 0 (CORESET0)** and **SS Block** are assumed to be as close as possible to the beginning of the initial BWP.
+- All input and output frequencies are expressed in **kHz**.
+
+Smart Defaults, Minimal Input
+-----------------------------
+
+With only a few optional parameters, ``nr_frequency`` computes an **optimal, consistent set of NR frequency settings** for a variety of deployment scenarios.
+
 
 Usage
 -----
